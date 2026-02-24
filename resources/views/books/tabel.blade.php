@@ -21,45 +21,37 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @foreach ($books as $book)
-<tr>
-    <td class="align-middle text-sm">
-
-        <p class="text-sm font-weight-bold mb-0">
-            {{ $book->kdbuku }}
-        </p>
+  @foreach ($books as $book)
+  <tr>
+    <td class="align-middle">
+      <p class="text-sm font-weight-bold mb-0">{{ $book->kdbuku }}</p>
     </td>
-    <td>
-        <p class="text-sm font-weight-bold mb-0">
-            {{ $book->judul }}
-        </p>
+    <td class="align-middle">
+      <p class="text-sm font-weight-bold mb-0">{{ $book->judul }}</p>
     </td>
-    <td>
-        <p class="text-sm font-weight-bold mb-0">
-            {{ $book->jenis }}
-        </p>
+    <td class="align-middle">
+      <p class="text-sm font-weight-bold mb-0">{{ $book->jenis }}</p>
     </td> 
-    <td>
-        <p class="text-sm font-weight-bold mb-0">
-            {{ $book->tahun_terbit }}
-        </p>
+    <td class="align-middle">
+      <p class="text-sm font-weight-bold mb-0">{{ $book->tahun_terbit }}</p>
     </td>
-    <td>
-        <p class="text-sm font-weight-bold mb-0">
-            {{ $book->penulis }}
-        </p>
+    <td class="align-middle">
+      <p class="text-sm font-weight-bold mb-0">{{ $book->penulis }}</p>
     </td>
-    <td>
-        <p class="text-sm font-weight-bold mb-0">
-            {{ $book->penerbit }}
-        </p>
+    <td class="align-middle">
+      <p class="text-sm font-weight-bold mb-0">{{ $book->penerbit }}</p>
     </td>
-    <td>
-        <p class="text-sm font-weight-bold mb-0">
-            {{ $book->stock }}
-        </p>
+    <td class="align-middle">
+      <p class="text-sm font-weight-bold mb-0">{{ $book->stock }}</p>
     </td>
-</tr>
+
+    <td class="align-middle text-center">
+      <a href="{{ route('books.edit', $book->kdbuku) }}" class="text-secondary font-weight-bold text-xs">
+        <i class="fas fa-edit text-primary"></i> Edit
+      </a>
+    </td>
+  </tr>
+</tbody>
 @endforeach
 
 

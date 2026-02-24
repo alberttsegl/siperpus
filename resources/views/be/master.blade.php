@@ -18,29 +18,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="../be/assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="../be/assets/img/iconlib.png">
-  <title>
-    {{$title}} - SIPERPUS
-  </title>
-  
-  <!--     Fonts and icons     -->
-  <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" /> -->
-  <link href="../be/assets/css/font.css" rel="stylesheet" />
-  <style>
-    
-    body{
-      font-family: 'Open Sans:300,400,600,700';
-    }
-  </style>
-  <!-- Nucleo Icons -->
-  <link href="../be/assets/css/nucleo-icons.css" rel="stylesheet" />
-  <link href="../be/assets/css/nucleo-svg.css" rel="stylesheet" />
-  <!-- Font Awesome Icons -->
-  <script src="../be/assets/js/plugins/all.js" crossorigin="anonymous"></script>
-  <link href="../be/assets/css/nucleo-svg.css" rel="stylesheet" />
-  <!-- CSS Files -->
-  <link id="pagestyle" href="../be/assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('be/assets/img/apple-icon.png') }}">
+<link rel="icon" type="image/png" href="{{ asset('be/assets/img/iconlib.png') }}">
+<link href="{{ asset('be/assets/css/font.css') }}" rel="stylesheet" />
+<link href="{{ asset('be/assets/css/nucleo-icons.css') }}" rel="stylesheet" />
+<link href="{{ asset('be/assets/css/nucleo-svg.css') }}" rel="stylesheet" />
+<script src="{{ asset('be/assets/js/plugins/all.js') }}"></script>
+<link id="pagestyle" href="{{ asset('be/assets/css/soft-ui-dashboard.css?v=1.0.7') }}" rel="stylesheet" />
   <!-- Nepcha Analytics (nepcha.com) -->
   <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
   <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
@@ -157,11 +141,12 @@
     </div>
   </div>
   <!--   Core JS Files   -->
-  <script src="../be/assets/js/core/popper.min.js"></script>
-  <script src="../be/assets/js/core/bootstrap.min.js"></script>
-  <script src="../be/assets/js/plugins/perfect-scrollbar.min.js"></script>
-  <script src="../be/assets/js/plugins/smooth-scrollbar.min.js"></script>
-  <script src="../be/assets/js/plugins/chartjs.min.js"></script>
+  <script src="{{ asset('be/assets/js/core/popper.min.js') }}"></script>
+<script src="{{ asset('be/assets/js/core/bootstrap.min.js') }}"></script>
+<script src="{{ asset('be/assets/js/plugins/perfect-scrollbar.min.js') }}"></script>
+<script src="{{ asset('be/assets/js/plugins/smooth-scrollbar.min.js') }}"></script>
+<script src="{{ asset('be/assets/js/plugins/chartjs.min.js') }}"></script>
+<script src="{{ asset('be/assets/js/soft-ui-dashboard.min.js?v=1.0.7') }}"></script>
   <script>
     var ctx = document.getElementById("chart-bars").getContext("2d");
 
@@ -344,7 +329,6 @@
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="../be/assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
 </body>
 
 </html>

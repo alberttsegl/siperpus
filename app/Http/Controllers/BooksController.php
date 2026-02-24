@@ -13,9 +13,9 @@ class BooksController extends Controller
     public function index()
     {
         return view('books.index', [
-        'title' => 'Books',
-        'books' => Book::all()
-       ]);
+            'title' => 'Books',
+            'books' => Book::all()
+        ]);
     }
 
     /**
@@ -24,7 +24,7 @@ class BooksController extends Controller
     public function create()
     {
         return view('books.create', [
-            'title'=> 'Books'
+            'title' => 'Books'
         ]);
     }
 
@@ -32,49 +32,44 @@ class BooksController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    $request->validate([
-        'judul'        => 'required',
-        'jenis'        => 'required',
-        'tahun_terbit' => 'required',
-        'penulis'      => 'required',
-        'penerbit'     => 'required',
-        'stock'        => 'required|integer|min:1',
-    ]);
+    {
+        $request->validate([
+            'judul'        => 'required',
+            'jenis'        => 'required',
+            'tahun_terbit' => 'required',
+            'penulis'      => 'required',
+            'penerbit'     => 'required',
+            'stock'        => 'required|integer|min:1',
+        ]);
 
-    $book = new Book();
+        $book = new Book();
 
-    // FORMAT: BK00000001 (10 karakter)
-    $last = Book::orderBy('kdbuku', 'desc')->first();
+        $last = Book::orderBy('kdbuku', 'desc')->first();
+        if ($last) {
+            $num = (int) substr($last->kdbuku, 2) + 1;
+        } else {
+            $num = 1;
+        }
 
-    if ($last) {
-        $num = (int) substr($last->kdbuku, 2) + 1;
-    } else {
-        $num = 1;
+        $book->kdbuku = 'BK' . str_pad($num, 8, '0', STR_PAD_LEFT);
+        $book->judul        = $request->judul;
+        $book->jenis        = $request->jenis;
+        $book->tahun_terbit = $request->tahun_terbit;
+        $book->penulis      = $request->penulis;
+        $book->penerbit     = $request->penerbit;
+        $book->stock        = $request->stock;
+
+        $book->save();
+
+        return redirect()->route('books.index')->with('success', 'Book created successfully!');
     }
-
-    $book->kdbuku = 'BK' . str_pad($num, 8, '0', STR_PAD_LEFT);
-
-    $book->judul        = $request->judul;
-    $book->jenis        = $request->jenis;
-    $book->tahun_terbit = $request->tahun_terbit;
-    $book->penulis      = $request->penulis;
-    $book->penerbit     = $request->penerbit;
-    $book->stock        = $request->stock;
-
-    $book->save();
-
-    return redirect()->route('books.index');
-}
-
-
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        //
+        // Biasanya untuk detail buku
     }
 
     /**
@@ -82,7 +77,13 @@ class BooksController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        // Cari berdasarkan kdbuku (parameter $id diambil dari URL)
+        $book = Book::where('kdbuku', $id)->firstOrFail();
+
+        return view('books.edit', [
+            'title' => 'Edit Book',
+            'book'  => $book
+        ]);
     }
 
     /**
@@ -90,7 +91,28 @@ class BooksController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'judul'        => 'required',
+            'jenis'        => 'required',
+            'tahun_terbit' => 'required',
+            'penulis'      => 'required',
+            'penerbit'     => 'required',
+            'stock'        => 'required|integer|min:1',
+        ]);
+
+        // Cari berdasarkan kdbuku
+        $book = Book::where('kdbuku', $id)->firstOrFail();
+
+        $book->judul        = $request->judul;
+        $book->jenis        = $request->jenis;
+        $book->tahun_terbit = $request->tahun_terbit;
+        $book->penulis      = $request->penulis;
+        $book->penerbit     = $request->penerbit;
+        $book->stock        = $request->stock;
+
+        $book->save();
+
+        return redirect()->route('books.index')->with('success', 'Book updated successfully!');
     }
 
     /**
@@ -98,6 +120,9 @@ class BooksController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $book = Book::where('kdbuku', $id)->firstOrFail();
+        $book->delete();
+
+        return redirect()->route('books.index')->with('success', 'Book deleted successfully!');
     }
 }
