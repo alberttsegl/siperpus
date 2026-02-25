@@ -12,25 +12,25 @@
         <table class="table align-items-center justify-content-center mb-0">
           <thead>
             <tr>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Title</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Type</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Year</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Writer</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Publisher</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Stock</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">No</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Title</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Type</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Year</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Writer</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Publisher</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Stock</th>
             </tr>
           </thead>
           <tbody>
             @foreach ($books as $book)
             <tr>
-              <td class="align-middle"><span class="text-sm font-weight-bold">{{ $book->kdbuku }}</span></td>
-              <td class="align-middle"><span class="text-sm font-weight-bold">{{ $book->judul }}</span></td>
-              <td class="align-middle"><span class="text-sm font-weight-bold">{{ $book->jenis }}</span></td>
-              <td class="align-middle"><span class="text-sm font-weight-bold">{{ $book->tahun_terbit }}</span></td>
-              <td class="align-middle"><span class="text-sm font-weight-bold">{{ $book->penulis }}</span></td>
-              <td class="align-middle"><span class="text-sm font-weight-bold">{{ $book->penerbit }}</span></td>
-              <td class="align-middle"><span class="text-sm font-weight-bold">{{ $book->stock }}</span></td>
+              <td class="align-middle ps-3"><span class="text-sm font-weight-bold">{{ $book->kdbuku }}</span></td>
+              <td class="align-middle ps-3"><span class="text-sm font-weight-bold">{{ $book->judul }}</span></td>
+              <td class="align-middle ps-3"><span class="text-sm font-weight-bold">{{ $book->jenis }}</span></td>
+              <td class="align-middle ps-3"><span class="text-sm font-weight-bold">{{ $book->tahun_terbit }}</span></td>
+              <td class="align-middle ps-3"><span class="text-sm font-weight-bold">{{ $book->penulis }}</span></td>
+              <td class="align-middle ps-3"><span class="text-sm font-weight-bold">{{ $book->penerbit }}</span></td>
+              <td class="align-middle ps-3"><span class="text-sm font-weight-bold">{{ $book->stock }}</span></td>
               <td class="align-middle text-center">
                 <div class="d-flex justify-content-center gap-2">
                   <!-- Edit -->
