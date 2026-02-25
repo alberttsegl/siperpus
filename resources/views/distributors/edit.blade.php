@@ -50,7 +50,6 @@
             <i class="fa fa-bell cursor-pointer"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
-            <!-- Bisa disamain notification persis Books atau custom -->
           </ul>
         </li>
       </ul>
@@ -60,7 +59,7 @@
 <!-- End Navbar -->
 
 <div class="container-fluid py-4">
-  @include('distributors.frmEdit') <!-- include form edit distributor -->
+  @include('distributors.frmEdit')
 </div>
 
 @endsection
