@@ -8,12 +8,9 @@ class Distributor extends Model
 {
     protected $table = 'distributors';
     protected $primaryKey = 'id_distributor';
+    public $timestamps = false;
 
-    protected $fillable = [
-        'nama_distributor',
-        'alamat',
-        'no_telpon',
-    ];
+    protected $fillable = ['nama_distributor', 'alamat', 'no_telpon'];
 
     public function purchases()
 {

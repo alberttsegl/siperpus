@@ -8,3 +8,4 @@ Route::get('/', function () {
 
 Route::resource('dashboard', App\Http\Controllers\DashboardController::class);
 Route::resource('books', App\Http\Controllers\BooksController::class);
+Route::resource('distributors', App\Http\Controllers\DistributorController::class);
