@@ -1,10 +1,10 @@
 <div class="row">
         <div class="col-12">
           <div class="card mb-4">
-            <div class="card-header pb-0">
-              <h6>Projects table</h6>
-            </div>
-            <div class="card-body px-0 pt-0 pb-2">
+            <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+  <h6>Projects Table</h6>
+  <input type="text" id="bookSearch" class="form-control form-control-sm w-auto" placeholder="Search books...">
+</div>
               <div class="table-responsive p-0">
                 <table class="table align-items-center justify-content-center mb-0">
                   <thead>
@@ -63,3 +63,21 @@
           </div>
         </div>
       </div>
+      <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('bookSearch');
+  input.addEventListener('keyup', () => {
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll('table tbody tr');
+
+    rows.forEach(row => {
+      const title = row.cells[1]?.textContent.toLowerCase() || '';
+      const writer = row.cells[4]?.textContent.toLowerCase() || '';
+      const publisher = row.cells[5]?.textContent.toLowerCase() || '';
+
+      // tampilkan row kalau match, hide kalau tidak
+      row.style.display = (title.includes(filter) || writer.includes(filter) || publisher.includes(filter)) ? '' : 'none';
+    });
+  });
+});
+</script>
