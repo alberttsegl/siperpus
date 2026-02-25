@@ -1,4 +1,5 @@
 @extends('be.master')
+@section('title', 'Input')
 @section('menu')
     @include('be.menu')
 @endsection
