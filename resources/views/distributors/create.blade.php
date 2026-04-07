@@ -31,7 +31,6 @@
             <span class="d-sm-inline d-none">Sign In</span>
           </a>
         </li>
-        <!-- remaining navbar content sama kayak books -->
       </ul>
     </div>
   </div>
@@ -39,7 +38,7 @@
 <!-- End Navbar -->
 
 <div class="container-fluid py-4">
-  @include('distributors.frmInsert') <!-- ini include form distributor -->
+  @include('distributors.frmInsert')
 </div>
 
 @endsection
