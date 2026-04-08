@@ -1,11 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BooksController;
+use App\Http\Controllers\DistributorController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('dashboard', App\Http\Controllers\DashboardController::class);
-Route::resource('books', App\Http\Controllers\BooksController::class);
-Route::resource('distributors', App\Http\Controllers\DistributorController::class);
+// Resource routes untuk fitur utama
+Route::resource('dashboard', DashboardController::class);
+Route::resource('books', BooksController::class);
+Route::resource('distributors', DistributorController::class);
+
+// Pakai 'user' (tunggal) agar sesuai dengan folder views/user
+Route::resource('user', UserController::class);
+
+// Route tambahan untuk profile & avatar
+Route::get('/user/avatar/{id}', [UserController::class, 'showAvatar'])->name('user.avatar');
+Route::post('/user-profile-update', [UserController::class, 'updateProfile'])->name('user.profile.update');
