@@ -5,7 +5,7 @@
   <div class="col-12">
     <div class="card mb-4">
       <div class="card-header pb-0 d-flex justify-content-between align-items-center ps-3">
-        <h6>Projects Table</h6>
+        <h6>Books Table</h6>
         <input type="text" id="bookSearch" class="form-control form-control-sm w-auto" placeholder="Search books...">
       </div>
       <div class="table-responsive p-0">
