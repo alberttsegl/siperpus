@@ -39,8 +39,54 @@
   <!--menu-->
   @yield('menu')
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-    <!-- Main -->
-     @yield('main')
+  <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+    <div class="container-fluid py-1 px-3">
+      <nav aria-label="breadcrumb">
+        <h6 class="font-weight-bolder mb-0">Dashboard</h6>
+      </nav>
+      <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+        <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+          </div>
+        <ul class="navbar-nav justify-content-end">
+          
+          @auth
+            <li class="nav-item d-flex align-items-center me-3">
+              <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
+                <img src="{{ route('user.avatar', Auth::user()->id) }}" class="avatar avatar-xs me-2 shadow-sm" alt="user_img">
+                <span class="d-sm-inline d-none">Hi, {{ Auth::user()->name }}</span>
+              </a>
+            </li>
+            <li class="nav-item d-flex align-items-center">
+              <form action="{{ route('logout') }}" method="POST" id="logout-form" class="d-none">
+                @csrf
+              </form>
+              <a href="javascript:;" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link text-body font-weight-bold px-0 text-danger">
+                <i class="fa fa-sign-out me-sm-1"></i>
+                <span class="d-sm-inline d-none">Logout</span>
+              </a>
+            </li>
+          @endauth
+
+          @guest
+            <li class="nav-item d-flex align-items-center">
+              <a href="{{ route('login') }}" class="nav-link text-body font-weight-bold px-0">
+            </li>
+          @endguest
+
+          <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+            <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+              <div class="sidenav-toggler-inner">
+                <i class="sidenav-toggler-line"></i>
+                <i class="sidenav-toggler-line"></i>
+                <i class="sidenav-toggler-line"></i>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  @yield('main')
       <footer class="footer pt-3  ">
         <div class="container-fluid">
           <div class="row align-items-center justify-content-lg-between">
