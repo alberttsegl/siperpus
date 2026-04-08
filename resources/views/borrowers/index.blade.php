@@ -23,7 +23,7 @@
           </div>
           <ul class="navbar-nav  justify-content-end">
             <li class="nav-item d-flex align-items-center">
-      <a class="btn btn-outline-primary btn-sm mb-0 me-3" href="#">Add Book</a>
+      <a class="btn btn-outline-primary btn-sm mb-0 me-3" href="#">Add Borrowers</a>
     </li>
 
     @guest
