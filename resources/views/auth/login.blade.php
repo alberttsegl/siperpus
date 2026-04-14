@@ -19,9 +19,14 @@
                   <input type="email" name="email" class="form-control form-control-lg" placeholder="Email" aria-label="Email" required>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label font-weight-bold">Password</label>
-                  <input type="password" name="password" class="form-control form-control-lg" placeholder="Password" aria-label="Password" required>
-                </div>
+    <label class="form-label font-weight-bold">Password</label>
+    <input type="password" name="password" class="form-control form-control-lg" placeholder="Password" aria-label="Password" required>
+</div>
+
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" name="remember" id="rememberMe">
+    <label class="custom-control-label" for="rememberMe">Remember me</label>
+</div>
                 <div class="text-center">
                   <button type="submit" class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0">Sign In</button>
                 </div>

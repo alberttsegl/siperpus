@@ -2,32 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Borrowers; // Pastikan pakai s
+use App\Models\Borrowers; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class BorrowerController extends Controller
 {
-    // Tampil Tabel
     public function index() {
-        $data = [
-            'title' => 'Borrower Management',
-            'borrowers' => Borrowers::all() // Ganti ke Borrowers
-        ];
-        return view('borrowers.index', $data);
+        return view('borrowers.index', [
+            'title' => 'Daftar Peminjam',
+            'borrowers' => Borrowers::all()
+        ]);
     }
 
-    // Form Tambah
     public function create() {
-        return view('borrowers.create', ['title' => 'Add Borrower']);
+        return view('borrowers.create', ['title' => 'Tambah Peminjam']);
     }
 
-    // Simpan Data
     public function store(Request $request) {
         $request->validate([
-            'nama_peminjam' => 'required',
-            'email' => 'required|email|unique:borrowers',
-            'password' => 'required|min:6',
+            'nama_peminjam' => 'nullable|max:30',
+            'jk'            => 'required|in:L,P',
+            'email'         => 'required|email|unique:borrowers,email',
+            'password'      => 'required|min:6',
+            'status'        => 'required|in:siswa,guru,tendik,umum',
+            'foto'          => 'nullable|image|max:2048',
         ]);
 
         $data = $request->all();
@@ -37,39 +37,48 @@ class BorrowerController extends Controller
             $data['foto'] = $request->file('foto')->store('borrowers', 'public');
         }
 
-        Borrowers::create($data); // Pakai Borrowers
-        return redirect()->route('borrowers.index')->with('success', 'Data berhasil ditambah!');
+        Borrowers::create($data);
+        return redirect()->route('borrowers.index')->with('success', 'Peminjam berhasil disimpan!');
     }
 
-    // Form Edit
     public function edit($id) {
-        // Menggunakan id_peminjam sebagai primary key
         $borrower = Borrowers::findOrFail($id); 
         return view('borrowers.edit', [
-            'title' => 'Edit Borrower',
+            'title' => 'Edit Peminjam',
             'borrowers' => $borrower
         ]);
     }
 
-    // Update Data
     public function update(Request $request, $id) {
-        $borrower = Borrowers::findOrFail($id); // Tadi lu tulis 'Borrower' (tanpa s), itu bakal error
-        
+        $borrower = Borrowers::findOrFail($id);
+
+        $request->validate([
+            'email' => 'required|email|unique:borrowers,email,'.$id.',id_peminjam',
+            'jk'    => 'required|in:L,P',
+            'status'=> 'required|in:siswa,guru,tendik,umum',
+        ]);
+
         $data = $request->all();
-        if ($request->password) {
+
+        if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         } else {
             unset($data['password']);
         }
 
+        if ($request->hasFile('foto')) {
+            if ($borrower->foto) Storage::disk('public')->delete($borrower->foto);
+            $data['foto'] = $request->file('foto')->store('borrowers', 'public');
+        }
+
         $borrower->update($data);
-        return redirect()->route('borrowers.index')->with('success', 'Data berhasil diupdate!');
+        return redirect()->route('borrowers.index')->with('success', 'Data diperbarui!');
     }
 
-    // Hapus Data
     public function destroy($id) {
-        $borrower = Borrowers::findOrFail($id); // Tadi lu tulis 'Borrower' (tanpa s), itu bakal error
+        $borrower = Borrowers::findOrFail($id);
+        if ($borrower->foto) Storage::disk('public')->delete($borrower->foto);
         $borrower->delete();
-        return redirect()->route('borrowers.index')->with('success', 'Peminjam dihapus!');
+        return redirect()->route('borrowers.index')->with('success', 'Data dihapus!');
     }
 }

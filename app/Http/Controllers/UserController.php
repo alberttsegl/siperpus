@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered; 
 
 class UserController extends Controller
 {
@@ -29,23 +30,29 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi foto
+            'role' => 'required|in:admin,guru,siswa',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $data = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
+            // HAPUS baris email_verified_at => now() agar statusnya 'Not Verified' di awal
         ];
 
-        // Simpan ke storage/app/private
         if ($request->hasFile('profile_picture')) {
             $data['profile_picture'] = $request->file('profile_picture')->store('private', 'local');
         }
 
-        User::create($data);
+        // Simpan user ke variabel
+        $user = User::create($data);
 
-        return redirect()->route('user.index')->with('success', 'User created successfully');
+        // TRIGGER pengiriman email verifikasi ke Gmail
+        event(new Registered($user));
+
+        return redirect()->route('user.index')->with('success', 'User created! Silakan cek Gmail untuk verifikasi.');
     }
 
     public function edit($id)
@@ -62,19 +69,18 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.$id,
+            'role' => 'required|in:admin,guru,siswa',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->role = $request->role;
 
-        // Update foto jika ada file baru
         if ($request->hasFile('profile_picture')) {
-            // Hapus foto lama jika ada
             if ($user->profile_picture) {
                 Storage::disk('local')->delete($user->profile_picture);
             }
-            // Simpan foto baru ke private
             $user->profile_picture = $request->file('profile_picture')->store('private', 'local');
         }
 
@@ -91,7 +97,6 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         
-        // Hapus file fisik dari storage sebelum hapus data di DB
         if ($user->profile_picture) {
             Storage::disk('local')->delete($user->profile_picture);
         }
@@ -100,9 +105,6 @@ class UserController extends Controller
         return back()->with('success', 'User successfully deleted');
     }
 
-    /**
-     * Menampilkan Avatar berdasarkan ID (untuk tabel dan edit)
-     */
     public function showAvatar($id)
     {
         $user = User::findOrFail($id);
@@ -111,7 +113,6 @@ class UserController extends Controller
             return Storage::disk('local')->response($user->profile_picture);
         }
         
-        // Fallback jika tidak ada foto
         return redirect("https://ui-avatars.com/api/?name=" . urlencode($user->name) . "&background=random");
     }
 }

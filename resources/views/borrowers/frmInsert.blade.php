@@ -1,99 +1,56 @@
-<h5>Input Books Data</h5>
-
-<form action="{{ route('borrowers.store') }}" method="post" id="frm">
+<h5>Tambah Peminjam Baru</h5>
+<form action="{{ route('borrowers.store') }}" method="post" id="frm" enctype="multipart/form-data">
   @csrf
-
-  <div class="mb-3">
-    <label for="judul" class="form-label">Title</label>
-    <input type="text" id="judul" name="judul" class="form-control">
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label>Nama Peminjam</label>
+      <input type="text" name="nama_peminjam" class="form-control" maxlength="30">
+    </div>
+    <div class="col-md-3 mb-3">
+      <label>Jenis Kelamin</label>
+      <select name="jk" class="form-control">
+        <option value="L">Laki-laki</option>
+        <option value="P">Perempuan</option>
+      </select>
+    </div>
+    <div class="col-md-3 mb-3">
+      <label>Status</label>
+      <select name="status" class="form-control">
+        <option value="siswa">Siswa</option>
+        <option value="guru">Guru</option>
+        <option value="tendik">Tendik</option>
+        <option value="umum">Umum</option>
+      </select>
+    </div>
   </div>
 
-  <div class="mb-3">
-    <label for="jenis" class="form-label">Type</label>
-    <input type="text" id="jenis" name="jenis" class="form-control">
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label>Email</label>
+      <input type="email" name="email" class="form-control" required>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label>Password</label>
+      <input type="password" name="password" class="form-control" required>
+    </div>
   </div>
 
-  <div class="mb-3">
-    <label for="tahun_terbit" class="form-label">Publication Year</label>
-    <input type="text" id="tahun_terbit" name="tahun_terbit" class="form-control">
+  <div class="row">
+    <div class="col-md-4 mb-3"><label>NIP</label><input type="text" name="nip" class="form-control"></div>
+    <div class="col-md-4 mb-3"><label>NUPTK</label><input type="text" name="nuptk" class="form-control"></div>
+    <div class="col-md-4 mb-3"><label>NIK</label><input type="text" name="nik" class="form-control"></div>
   </div>
 
-  <div class="mb-3">
-    <label for="penulis" class="form-label">Writer</label>
-    <input type="text" id="penulis" name="penulis" class="form-control">
+  <div class="row">
+    <div class="col-md-4 mb-3"><label>NISN</label><input type="text" name="nisn" class="form-control"></div>
+    <div class="col-md-4 mb-3"><label>Kelas</label><input type="text" name="kelas" class="form-control"></div>
+    <div class="col-md-4 mb-3"><label>Tahun Ajaran</label><input type="text" name="tahun_ajaran" class="form-control" placeholder="2023/2024"></div>
   </div>
 
-  <div class="mb-3">
-    <label for="penerbit" class="form-label">Publisher</label>
-    <input type="text" id="penerbit" name="penerbit" class="form-control">
-  </div>
+  <div class="mb-3"><label>No Telpon</label><input type="text" name="no_telpon" class="form-control"></div>
+  <div class="mb-3"><label>Alamat</label><textarea name="alamat" class="form-control"></textarea></div>
+  <div class="mb-3"><label>Foto</label><input type="file" name="foto" class="form-control"></div>
 
-  <div class="mb-3">
-    <label for="stock" class="form-label">Stock</label>
-    <input type="number" id="stock" name="stock" class="form-control">
-  </div>
-
-  <button type="submit" id="btnSimpan" class="btn btn-outline-primary btn-sm">
-    Save Now
-  </button>
-
-  <a href="{{ route('borrowers.index') }}" class="btn btn-outline-secondary btn-sm">
-    Cancel
-  </a>
+  <button type="submit" class="btn btn-primary">Simpan</button>
+  <a href="{{ route('borrowers.index') }}" class="btn btn-secondary">Batal</a>
 </form>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-  var frm = document.getElementById("frm");
-  var btnSimpan = document.getElementById("btnSimpan");
-  var judul = document.getElementById("judul");
-  var jenis = document.getElementById("jenis");
-  var tahun = document.getElementById("tahun_terbit");
-  var penulis = document.getElementById("penulis");
-  var penerbit = document.getElementById("penerbit");
-  var stock = document.getElementById("stock");
-
-  document.getElementById("frm").onsubmit = function (e) {
-    e.preventDefault();
-
-    if (judul.value.trim() === "") {
-      Swal.fire("Invalid Data", "Title tidak boleh kosong", "error");
-      judul.focus();
-      return;
-    }
-
-    if (jenis.value.trim() === "") {
-      Swal.fire("Invalid Data", "Type tidak boleh kosong", "error");
-      jenis.focus();
-      return;
-    }
-
-    if (tahun.value.trim() === "") {
-      Swal.fire("Invalid Data", "Publication year tidak boleh kosong", "error");
-      tahun.focus();
-      return;
-    }
-
-    if (penulis.value.trim() === "") {
-      Swal.fire("Invalid Data", "Writer tidak boleh kosong", "error");
-      penulis.focus();
-      return;
-    }
-
-    if (penerbit.value.trim() === "") {
-      Swal.fire("Invalid Data", "Publisher tidak boleh kosong", "error");
-      penerbit.focus();
-      return;
-    }
-
-    if (stock.value.trim() === "" || stock.value <= 0) {
-      Swal.fire("Invalid Data", "Stock harus lebih dari 0", "error");
-      stock.focus();
-      return;
-    }
-
-    // semua valid → submit
-    document.getElementById("frm").submit();
-  };
-</script>

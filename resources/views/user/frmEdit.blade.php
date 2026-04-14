@@ -18,6 +18,15 @@
                 <input type="email" id="email" name="email" class="form-control" value="{{ $user->email }}">
             </div>
 
+            <div class="mb-3">
+                <label class="form-label">Role</label>
+                <select name="role" id="role" class="form-control">
+                    <option value="siswa" {{ $user->role == 'siswa' ? 'selected' : '' }}>Siswa</option>
+                    <option value="guru" {{ $user->role == 'guru' ? 'selected' : '' }}>Guru</option>
+                    <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                </select>
+            </div>
+
             <div class="mb-4">
                 <label class="form-label">Current Profile Picture</label>
                 <div class="d-flex align-items-center mb-3">

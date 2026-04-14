@@ -9,55 +9,50 @@
         <table class="table align-items-center mb-0">
           <thead>
             <tr>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Peminjam</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Identitas Dasar</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Akademik/Kerja</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Alamat & Kontak</th>
-              <th class="text-secondary opacity-7"></th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">ID</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Foto</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Nama</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">JK</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Status</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">NIK</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">NIP</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">NUPTK</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">NISN</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Kelas</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Tahun Ajaran</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Email</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Telepon</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Alamat</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Aksi</th>
             </tr>
           </thead>
           <tbody>
             @foreach ($borrowers as $b)
             <tr>
+              <td class="ps-3 text-xs font-weight-bold">{{ $b->id_peminjam }}</td>
               <td class="ps-3">
-                <div class="d-flex px-2 py-1">
-                  <div>
-                    <img src="{{ $b->foto ? asset('storage/'.$b->foto) : asset('be/assets/img/default-avatar.png') }}" class="avatar avatar-sm me-3" alt="user">
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">{{ $b->nama_peminjam }}</h6>
-                    <p class="text-xs text-secondary mb-0">{{ $b->jk == 'L' ? 'Laki-laki' : 'Perempuan' }} | <b>{{ $b->status }}</b></p>
-                  </div>
-                </div>
+                <img src="{{ $b->foto ? asset('storage/'.$b->foto) : asset('be/assets/img/default-avatar.png') }}" class="avatar avatar-sm" alt="foto">
               </td>
-
+              <td class="ps-3 text-sm font-weight-bold">{{ $b->nama_peminjam }}</td>
+              <td class="ps-3 text-xs">{{ $b->jk }}</td>
+              <td class="ps-3 text-xs">{{ $b->status }}</td>
+              <td class="ps-3 text-xs">{{ $b->nik ?? '-' }}</td>
+              <td class="ps-3 text-xs">{{ $b->nip ?? '-' }}</td>
+              <td class="ps-3 text-xs">{{ $b->nuptk ?? '-' }}</td>
+              <td class="ps-3 text-xs">{{ $b->nisn ?? '-' }}</td>
+              <td class="ps-3 text-xs">{{ $b->kelas ?? '-' }}</td>
+              <td class="ps-3 text-xs">{{ $b->tahun_ajaran ?? '-' }}</td>
+              <td class="ps-3 text-xs">{{ $b->email }}</td>
+              <td class="ps-3 text-xs">{{ $b->no_telpon }}</td>
               <td class="ps-3">
-                <p class="text-xs font-weight-bold mb-0">NIK: {{ $b->nik ?? '-' }}</p>
-                <p class="text-xs text-secondary mb-0">NISN: {{ $b->nisn ?? '-' }}</p>
-                <p class="text-xs text-secondary mb-0">NIP/NUPTK: {{ $b->nip ?? '-' }} / {{ $b->nuptk ?? '-' }}</p>
+                <p class="text-xs mb-0 text-truncate" style="max-width: 120px;">{{ $b->alamat }}</p>
               </td>
-
-              <td class="ps-3">
-                <p class="text-xs font-weight-bold mb-0">Kelas: {{ $b->kelas ?? '-' }}</p>
-                <p class="text-xs text-secondary mb-0">Thn Ajaran: {{ $b->tahun_ajaran ?? '-' }}</p>
-              </td>
-
-              <td class="ps-3">
-                <p class="text-xs font-weight-bold mb-0">{{ $b->email }}</p>
-                <p class="text-xs text-secondary mb-0">{{ $b->no_telpon }}</p>
-                <p class="text-xxs text-secondary mb-0 text-truncate" style="max-width: 150px;">{{ $b->alamat }}</p>
-              </td>
-
               <td class="align-middle">
-                <div class="d-flex justify-content-center gap-2 pe-3">
-                  <a href="{{ route('borrowers.edit', $b->id_peminjam) }}" class="text-primary font-weight-bold text-xs">
-                    Edit
-                  </a>
-                  <form action="{{ route('borrowers.destroy', $b->id_peminjam) }}" method="POST" class="d-inline">
+                <div class="d-flex gap-2 pe-3">
+                  <a href="{{ route('borrowers.edit', $b->id_peminjam) }}" class="text-primary font-weight-bold text-xs">Edit</a>
+                  <form action="{{ route('borrowers.destroy', $b->id_peminjam) }}" method="POST">
                     @csrf @method('DELETE')
-                    <button type="button" class="btn-delete border-0 bg-transparent text-danger font-weight-bold text-xs">
-                      Delete
-                    </button>
+                    <button type="submit" class="border-0 bg-transparent text-danger font-weight-bold text-xs" onclick="return confirm('Hapus data?')">Delete</button>
                   </form>
                 </div>
               </td>

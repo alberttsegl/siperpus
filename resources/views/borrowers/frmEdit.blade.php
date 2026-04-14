@@ -1,69 +1,39 @@
-<h5>Edit Books Data</h5>
-
-<form action="{{ route('borrowers.update', $book->kdbuku) }}" method="POST" id="frmEdit">
-    @csrf
-    @method('PUT')
-
-    <div class="mb-3">
-        <label class="form-label">Title</label>
-        <input type="text" id="judul" name="judul" class="form-control" value="{{ $book->judul }}">
+<h5>Edit Peminjam</h5>
+<form action="{{ route('borrowers.update', $borrowers->id_peminjam) }}" method="post" enctype="multipart/form-data">
+  @csrf @method('PUT')
+  
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label>Nama Peminjam</label>
+      <input type="text" name="nama_peminjam" class="form-control" value="{{ $borrowers->nama_peminjam }}">
     </div>
-
-    <div class="mb-3">
-        <label class="form-label">Type</label>
-        <input type="text" id="jenis" name="jenis" class="form-control" value="{{ $book->jenis }}">
+    <div class="col-md-3 mb-3">
+      <label>JK</label>
+      <select name="jk" class="form-control">
+        <option value="L" {{ $borrowers->jk == 'L' ? 'selected' : '' }}>L</option>
+        <option value="P" {{ $borrowers->jk == 'P' ? 'selected' : '' }}>P</option>
+      </select>
     </div>
-
-    <div class="mb-3">
-        <label class="form-label">Publication Year</label>
-        <input type="text" id="tahun_terbit" name="tahun_terbit" class="form-control" value="{{ $book->tahun_terbit }}">
+    <div class="col-md-3 mb-3">
+      <label>Status</label>
+      <select name="status" class="form-control">
+        @foreach(['siswa', 'guru', 'tendik', 'umum'] as $st)
+          <option value="{{ $st }}" {{ $borrowers->status == $st ? 'selected' : '' }}>{{ ucfirst($st) }}</option>
+        @endforeach
+      </select>
     </div>
+  </div>
 
-    <div class="mb-3">
-        <label class="form-label">Writer</label>
-        <input type="text" id="penulis" name="penulis" class="form-control" value="{{ $book->penulis }}">
-    </div>
+  <div class="mb-3">
+    <label>Email</label>
+    <input type="email" name="email" class="form-control" value="{{ $borrowers->email }}">
+  </div>
+  
+  <div class="mb-3">
+    <label>Password (Kosongkan jika tidak ganti)</label>
+    <input type="password" name="password" class="form-control">
+  </div>
 
-    <div class="mb-3">
-        <label class="form-label">Publisher</label>
-        <input type="text" id="penerbit" name="penerbit" class="form-control" value="{{ $book->penerbit }}">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Stock</label>
-        <input type="number" id="stock" name="stock" class="form-control" value="{{ $book->stock }}">
-    </div>
-
-    <button type="submit" class="btn btn-primary btn-sm">Update Now</button>
-    <a href="{{ route('borrowers.index') }}" class="btn btn-secondary btn-sm">Cancel</a>
+  <button type="submit" class="btn btn-info">Update</button>
+  <a href="{{ route('borrowers.index') }}" class="btn btn-secondary">Batal</a>
 </form>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.getElementById("frmEdit").onsubmit = function(e) {
-        e.preventDefault();
-        const inputs = [
-            { id: 'judul', name: 'Title' },
-            { id: 'jenis', name: 'Type' },
-            { id: 'tahun_terbit', name: 'Year' },
-            { id: 'penulis', name: 'Writer' },
-            { id: 'penerbit', name: 'Publisher' }
-        ];
-
-        for (let input of inputs) {
-            let el = document.getElementById(input.id);
-            if (el.value.trim() === "") {
-                Swal.fire("Error", input.name + " cannot be empty!", "error");
-                el.focus();
-                return;
-            }
-        }
-
-        if (document.getElementById('stock').value <= 0) {
-            Swal.fire("Error", "Stock must be greater than 0", "error");
-            return;
-        }
-
-        this.submit();
-    };
-</script>

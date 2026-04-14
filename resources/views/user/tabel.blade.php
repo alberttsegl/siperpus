@@ -8,48 +8,58 @@
         <input type="text" id="userSearch" class="form-control form-control-sm w-auto" placeholder="Search users...">
       </div>
       <div class="table-responsive p-0">
-        <table class="table align-items-center justify-content-center mb-0">
-          <thead>
-            <tr>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">No</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Nama User</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Email</th>
-              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach ($users as $index => $user)
-            <tr>
-              <td class="align-middle ps-3"><span class="text-sm font-weight-bold">{{ $index + 1 }}</span></td>
-              <td class="align-middle ps-3"><span class="text-sm font-weight-bold">{{ $user->name }}</span></td>
-              <td class="align-middle ps-3"><span class="text-sm font-weight-bold">{{ $user->email }}</span></td>
-              <td class="align-middle text-center">
-                <div class="d-flex justify-content-center gap-2">
-                  <a href="{{ route('user.edit', $user->id) }}" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1 mb-0">
-                    <i class="fa-regular fa-pen-to-square"></i> Edit
-                  </a>
-
-                  <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="delete-user-form mb-0">
-                    @csrf
-                    @method('DELETE')
-                    <button type="button" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 btn-delete mb-0">
-                      <i class="fa-regular fa-trash-can"></i> Delete
-                    </button>
-                  </form>
+  <table class="table align-items-center justify-content-center mb-0">
+    <thead>
+      <tr>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">No</th>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">User</th>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Role</th>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Verified</th>
+        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach ($users as $index => $user)
+      <tr>
+        <td class="align-middle ps-3"><span class="text-sm font-weight-bold">{{ $index + 1 }}</span></td>
+        <td class="align-middle ps-3">
+            <div class="d-flex py-1">
+                <div>
+                    <img src="{{ route('user.avatar', $user->id) }}" class="avatar avatar-sm me-3 border-radius-lg" style="object-fit: cover;">
                 </div>
-              </td>
-            </tr>
-            @endforeach
-            @if($users->isEmpty())
-            <tr>
-              <td colspan="4" class="text-center text-muted py-4">Belum ada data user</td>
-            </tr>
-            @endif
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+                <div class="d-flex flex-column justify-content-center">
+                    <h6 class="mb-0 text-sm">{{ $user->name }}</h6>
+                    <p class="text-xs text-secondary mb-0">{{ $user->email }}</p>
+                </div>
+            </div>
+        </td>
+        <td class="align-middle ps-3">
+            <span class="badge badge-sm {{ $user->role == 'admin' ? 'bg-gradient-primary' : ($user->role == 'guru' ? 'bg-gradient-info' : 'bg-gradient-secondary') }}">
+                {{ $user->role }}
+            </span>
+        </td>
+        <td class="align-middle ps-3">
+            <span class="text-xs font-weight-bold">
+                {{ $user->email_verified_at ? $user->email_verified_at->format('d/m/Y') : 'Not Verified' }}
+            </span>
+        </td>
+        <td class="align-middle text-center">
+            <div class="d-flex justify-content-center gap-2">
+                <a href="{{ route('user.edit', $user->id) }}" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1 mb-0">
+                    <i class="fa-regular fa-pen-to-square"></i> Edit
+                </a>
+                <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="delete-user-form mb-0">
+                    @csrf @method('DELETE')
+                    <button type="button" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 btn-delete mb-0">
+                        <i class="fa-regular fa-trash-can"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </td>
+      </tr>
+      @endforeach
+    </tbody>
+  </table>
 </div>
 
 <script>

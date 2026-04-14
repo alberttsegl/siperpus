@@ -48,41 +48,33 @@
         <div class="ms-md-auto pe-md-3 d-flex align-items-center">
           </div>
         <ul class="navbar-nav justify-content-end">
-          
-          @auth
-            <li class="nav-item d-flex align-items-center me-3">
-              <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
-                <img src="{{ route('user.avatar', Auth::user()->id) }}" class="avatar avatar-xs me-2 shadow-sm" alt="user_img">
-                <span class="d-sm-inline d-none">Hi, {{ Auth::user()->name }}</span>
-              </a>
-            </li>
-            <li class="nav-item d-flex align-items-center">
-              <form action="{{ route('logout') }}" method="POST" id="logout-form" class="d-none">
-                @csrf
-              </form>
-              <a href="javascript:;" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link text-body font-weight-bold px-0 text-danger">
-                <i class="fa fa-sign-out me-sm-1"></i>
-                <span class="d-sm-inline d-none">Logout</span>
-              </a>
-            </li>
-          @endauth
+  @auth
+    <li class="nav-item d-flex align-items-center me-3">
+      <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
+        <img src="{{ route('user.avatar', Auth::user()->id) }}" class="avatar avatar-xs me-2 shadow-sm" alt="user_img">
+        <span class="d-sm-inline d-none">Hi, {{ Auth::user()->name }}</span>
+      </a>
+    </li>
+    <li class="nav-item d-flex align-items-center">
+      <form action="{{ route('logout') }}" method="POST" id="logout-form" class="d-none">
+        @csrf
+      </form>
+      <a href="javascript:;" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link text-body font-weight-bold px-0 text-danger">
+        <i class="fa fa-sign-out me-sm-1"></i>
+        <span class="d-sm-inline d-none">Logout</span>
+      </a>
+    </li>
+  @endauth
 
-          @guest
-            <li class="nav-item d-flex align-items-center">
-              <a href="{{ route('login') }}" class="nav-link text-body font-weight-bold px-0">
-            </li>
-          @endguest
-
-          <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-            <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
-              <div class="sidenav-toggler-inner">
-                <i class="sidenav-toggler-line"></i>
-                <i class="sidenav-toggler-line"></i>
-                <i class="sidenav-toggler-line"></i>
-              </div>
-            </a>
-          </li>
-        </ul>
+  @guest
+    <li class="nav-item d-flex align-items-center">
+      <a href="{{ route('login') }}" class="nav-link text-body font-weight-bold px-0">
+        <i class="fa fa-user me-sm-1"></i>
+        <span class="d-sm-inline d-none">Sign In</span>
+      </a>
+    </li>
+  @endguest
+</ul>
       </div>
     </div>
   </nav>

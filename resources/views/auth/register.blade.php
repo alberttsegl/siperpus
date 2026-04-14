@@ -12,6 +12,17 @@
               <p class="mb-0">Create a new account to access the dashboard</p>
             </div>
             <div class="card-body">
+              <div class="card-body">
+  {{-- Tambahkan baris ini --}}
+  @if ($errors->any())
+      <div class="alert alert-danger text-white text-sm border-radius-lg">
+          <ul class="mb-0">
+              @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+              @endforeach
+          </ul>
+      </div>
+  @endif
               <form action="/register" method="POST" role="form">
                 @csrf
                 <div class="mb-3">
