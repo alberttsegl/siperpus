@@ -14,7 +14,7 @@ class Distributor extends Model
 
     public function purchases()
 {
-    return $this->hasMany(Purchases::class, 'id_distributor');
+    return $this->hasMany(Purchases::class, 'id_distributor', 'id_distributor');
 }
 
 

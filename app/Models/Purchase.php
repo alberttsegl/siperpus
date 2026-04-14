@@ -22,7 +22,7 @@ class Purchase extends Model
     // relasi ke distributor
     public function distributor()
     {
-        return $this->belongsTo(Distributor::class, 'id_distributor');
+        return $this->belongsTo(Distributor::class, 'id_distributor', 'id_distributor');
     }
 
     // relasi ke detail pembelian

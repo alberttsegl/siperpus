@@ -1,78 +1,94 @@
-<div class="card">
-    <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-        <h5>Edit User Data</h5>
-        <a href="{{ route('user.index') }}" class="btn btn-secondary btn-sm mb-0">Back</a>
+<h5>Edit Transaksi Pembelian: {{ $purchase->no_nota }}</h5>
+
+<form action="{{ route('purchases.update', $purchase->no_nota) }}" method="POST" id="frmEditPurchase">
+    @csrf
+    @method('PUT')
+
+    <div class="mb-3">
+        <label class="form-label">Tanggal Nota</label>
+        <input type="date" id="tgl_nota" name="tgl_nota" class="form-control" 
+               value="{{ date('Y-m-d', strtotime($purchase->tgl_nota)) }}">
     </div>
-    <div class="card-body">
-        <form action="{{ route('user.update', $user->id) }}" method="POST" id="frmEdit" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
 
-            <div class="mb-3">
-                <label class="form-label">Full Name</label>
-                <input type="text" id="name" name="name" class="form-control" value="{{ $user->name }}">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Email Address</label>
-                <input type="email" id="email" name="email" class="form-control" value="{{ $user->email }}">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Role</label>
-                <select name="role" id="role" class="form-control">
-                    <option value="siswa" {{ $user->role == 'siswa' ? 'selected' : '' }}>Siswa</option>
-                    <option value="guru" {{ $user->role == 'guru' ? 'selected' : '' }}>Guru</option>
-                    <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                </select>
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label">Current Profile Picture</label>
-                <div class="d-flex align-items-center mb-3">
-                    <img src="{{ route('user.avatar', $user->id) }}?v={{ time() }}" 
-                         class="avatar avatar-md border-radius-lg" 
-                         alt="profile_image" 
-                         style="object-fit: cover; width: 80px; height: 80px; border: 1px solid #ddd;">
-                </div>
-                <label for="profile_picture" class="form-label">Upload New Photo</label>
-                <input type="file" id="profile_picture" name="profile_picture" class="form-control" accept="image/*">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Password <small class="text-muted">(Kosongkan jika tidak ganti)</small></label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="******">
-            </div>
-
-            <div class="mt-4">
-                <button type="submit" class="btn btn-primary btn-sm mb-0">Save Changes</button>
-            </div>
-        </form>
+    <div class="mb-3">
+        <label class="form-label">Distributor</label>
+        <select name="id_distributor" id="id_distributor" class="form-control">
+            @foreach($distributors as $d)
+                <option value="{{ $d->id_distributor }}" 
+                    {{ $purchase->id_distributor == $d->id_distributor ? 'selected' : '' }}>
+                    {{ $d->nama_distributor }}
+                </option>
+            @endforeach
+        </select>
     </div>
-</div>
+
+    <div class="mb-3">
+        <label class="form-label">Buku</label>
+        <select name="kdbuku" id="kdbuku" class="form-control">
+            @foreach($books as $b)
+                <option value="{{ $b->kdbuku }}" 
+                    {{ $detail->kdbuku == $b->kdbuku ? 'selected' : '' }}>
+                    {{ $b->judul }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Jumlah Beli</label>
+        <input type="number" id="jumlah_beli" name="jumlah_beli" class="form-control" 
+               value="{{ $detail->jumlah_beli }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Harga Beli</label>
+        <input type="number" id="harga_beli" name="harga_beli" class="form-control" 
+               value="{{ $detail->harga_beli }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Subtotal</label>
+        <input type="number" id="subtotal" name="subtotal" class="form-control bg-light" 
+               value="{{ $detail->subtotal }}" readonly>
+    </div>
+
+    <input type="hidden" name="total_bayar" id="total_bayar_hidden" value="{{ $purchase->total_bayar }}">
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary btn-sm">UPDATE NOW</button>
+        <a href="{{ route('purchases.index') }}" class="btn btn-secondary btn-sm">CANCEL</a>
+    </div>
+</form>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.getElementById("frmEdit").onsubmit = function(e) {
+    const qty = document.getElementById("jumlah_beli");
+    const harga = document.getElementById("harga_beli");
+    const subtotal = document.getElementById("subtotal");
+    const totalHidden = document.getElementById("total_bayar_hidden");
+
+    // Fungsi Hitung Otomatis seperti di form Distributor/Pembelian awal
+    function hitung() {
+        let vQty = parseFloat(qty.value) || 0;
+        let vHarga = parseFloat(harga.value) || 0;
+        let res = vQty * vHarga;
+        
+        subtotal.value = res;
+        totalHidden.value = res;
+    }
+
+    qty.oninput = hitung;
+    harga.oninput = hitung;
+
+    // Validasi SweetAlert2 biar sama gaya komunikasinya
+    document.getElementById("frmEditPurchase").onsubmit = function(e) {
         e.preventDefault();
-        const name = document.getElementById('name');
-        const email = document.getElementById('email');
-
-        if (name.value.trim() === "") {
-            Swal.fire("Error", "Nama tidak boleh kosong!", "error"); return;
-        }
-        if (!email.value.includes('@')) {
-            Swal.fire("Error", "Email tidak valid!", "error"); return;
+        
+        if (qty.value <= 0 || harga.value <= 0) {
+            Swal.fire("Error", "Jumlah atau Harga tidak boleh nol!", "error");
+            return;
         }
 
-        Swal.fire({
-            title: 'Simpan Perubahan?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#cb0c9f',
-            confirmButtonText: 'Ya, Update!'
-        }).then((result) => {
-            if (result.isConfirmed) this.submit();
-        });
+        this.submit();
     };
 </script>

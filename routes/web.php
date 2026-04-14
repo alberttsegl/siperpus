@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{BorrowerController, UserController, DashboardController, BooksController, LoginController, DistributorController};
+use App\Http\Controllers\{BorrowerController, UserController, DashboardController, BooksController, LoginController, DistributorController, PurchaseController};
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -33,6 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['role:admin,guru'])->group(function () {
         Route::resource('books', BooksController::class);
         Route::resource('borrowers', BorrowerController::class);
+        Route::resource('purchases', PurchaseController::class);
     });
 
     // Profile & Avatar (Bisa diakses semua role)
