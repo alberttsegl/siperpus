@@ -6,14 +6,16 @@
 
     <div class="mb-3">
         <label class="form-label">Tanggal Nota</label>
-        <input type="date" id="tgl_nota" name="tgl_nota" class="form-control" value="{{ date('Y-m-d', strtotime($purchase->tgl_nota)) }}">
+        <input type="date" id="tgl_nota" name="tgl_nota" class="form-control" 
+               value="{{ date('Y-m-d', strtotime($purchase->tgl_nota)) }}">
     </div>
 
     <div class="mb-3">
         <label class="form-label">Distributor</label>
         <select name="id_distributor" id="id_distributor" class="form-control">
             @foreach($distributors as $d)
-                <option value="{{ $d->id_distributor }}" {{ $purchase->id_distributor == $d->id_distributor ? 'selected' : '' }}>
+                <option value="{{ $d->id_distributor }}" 
+                    {{ $purchase->id_distributor == $d->id_distributor ? 'selected' : '' }}>
                     {{ $d->nama_distributor }}
                 </option>
             @endforeach
@@ -24,32 +26,38 @@
         <label class="form-label">Buku</label>
         <select name="kdbuku" id="kdbuku" class="form-control">
             @foreach($books as $b)
-                <option value="{{ $b->kdbuku }}" {{ $detail->kdbuku == $b->kdbuku ? 'selected' : '' }}>
+                <option value="{{ $b->kdbuku }}" 
+                    {{ $detail->kdbuku == $b->kdbuku ? 'selected' : '' }}>
                     {{ $b->judul }}
                 </option>
             @endforeach
         </select>
     </div>
 
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <label class="form-label">Jumlah Beli</label>
-            <input type="number" id="jumlah_beli" name="jumlah_beli" class="form-control" value="{{ $detail->jumlah_beli }}">
-        </div>
-        <div class="col-md-4 mb-3">
-            <label class="form-label">Harga Beli</label>
-            <input type="number" id="harga_beli" name="harga_beli" class="form-control" value="{{ $detail->harga_beli }}">
-        </div>
-        <div class="col-md-4 mb-3">
-            <label class="form-label">Subtotal</label>
-            <input type="number" id="subtotal" name="subtotal" class="form-control" value="{{ $detail->subtotal }}" readonly>
-        </div>
+    <div class="mb-3">
+        <label class="form-label">Jumlah Beli</label>
+        <input type="number" id="jumlah_beli" name="jumlah_beli" class="form-control" 
+               value="{{ $detail->jumlah_beli }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Harga Beli</label>
+        <input type="number" id="harga_beli" name="harga_beli" class="form-control" 
+               value="{{ $detail->harga_beli }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Subtotal</label>
+        <input type="number" id="subtotal" name="subtotal" class="form-control bg-light" 
+               value="{{ $detail->subtotal }}" readonly>
     </div>
 
     <input type="hidden" name="total_bayar" id="total_bayar_hidden" value="{{ $purchase->total_bayar }}">
 
-    <button type="submit" class="btn btn-primary btn-sm">Update Now</button>
-    <a href="{{ route('purchases.index') }}" class="btn btn-secondary btn-sm">Cancel</a>
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary btn-sm">UPDATE NOW</button>
+        <a href="{{ route('purchases.index') }}" class="btn btn-secondary btn-sm">CANCEL</a>
+    </div>
 </form>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -59,11 +67,12 @@
     const subtotal = document.getElementById("subtotal");
     const totalHidden = document.getElementById("total_bayar_hidden");
 
-    // Fungsi Hitung Otomatis
+    // Fungsi Hitung Otomatis seperti di form Distributor/Pembelian awal
     function hitung() {
         let vQty = parseFloat(qty.value) || 0;
         let vHarga = parseFloat(harga.value) || 0;
         let res = vQty * vHarga;
+        
         subtotal.value = res;
         totalHidden.value = res;
     }
@@ -71,22 +80,13 @@
     qty.oninput = hitung;
     harga.oninput = hitung;
 
-    // Validasi Form sebelum Submit
+    // Validasi SweetAlert2 biar sama gaya komunikasinya
     document.getElementById("frmEditPurchase").onsubmit = function(e) {
         e.preventDefault();
-        const inputs = [
-            { id: 'tgl_nota', name: 'Tanggal Nota' },
-            { id: 'jumlah_beli', name: 'Jumlah Beli' },
-            { id: 'harga_beli', name: 'Harga Beli' }
-        ];
-
-        for (let input of inputs) {
-            let el = document.getElementById(input.id);
-            if (el.value.trim() === "" || el.value == 0) {
-                Swal.fire("Error", input.name + " tidak boleh kosong!", "error");
-                el.focus();
-                return;
-            }
+        
+        if (qty.value <= 0 || harga.value <= 0) {
+            Swal.fire("Error", "Jumlah atau Harga tidak boleh nol!", "error");
+            return;
         }
 
         this.submit();

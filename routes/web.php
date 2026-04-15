@@ -5,7 +5,7 @@ use App\Http\Controllers\{BorrowerController, UserController, DashboardControlle
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
-// --- GUEST ROUTES (Halaman yang hanya bisa diakses sebelum login) ---
+// --- GUEST ROUTES ---
 Route::middleware(['guest'])->group(function () {
     Route::get('/', function () { return view('welcome'); });
     Route::get('/login', [LoginController::class, 'index'])->name('login');
@@ -14,39 +14,42 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/register', [LoginController::class, 'register']);
 });
 
-// Logout harus POST demi keamanan CSRF
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// --- PROTECTED ROUTES (Halaman setelah login & verifikasi email) ---
+// --- PROTECTED ROUTES ---
 Route::middleware(['auth', 'verified'])->group(function () {
     
-    // Satu pintu dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Filter akses berdasarkan Role Admin
+    // Admin Only
     Route::middleware(['role:admin'])->group(function () {
         Route::resource('user', UserController::class);
         Route::resource('distributors', DistributorController::class);
     });
 
-    // Filter akses berdasarkan Role Admin & Guru
+    // Admin & Guru
     Route::middleware(['role:admin,guru'])->group(function () {
         Route::resource('books', BooksController::class);
         Route::resource('borrowers', BorrowerController::class);
-        Route::resource('purchases', PurchaseController::class);
+        
+        // --- PURCHASE ROUTES (MANUAL) ---
+        Route::get('purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+        Route::get('purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+        Route::post('purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+        Route::get('purchases/{no_nota}/edit', [PurchaseController::class, 'edit'])->name('purchases.edit');
+        Route::put('purchases/{no_nota}', [PurchaseController::class, 'update'])->name('purchases.update');
+        Route::delete('purchases/{no_nota}', [PurchaseController::class, 'destroy'])->name('purchases.destroy');
     });
 
-    // Profile & Avatar (Bisa diakses semua role)
     Route::get('/user/avatar/{id}', [UserController::class, 'showAvatar'])->name('user.avatar');
     Route::post('/user-profile-update', [UserController::class, 'updateProfile'])->name('user.profile.update');
 });
 
-// --- EMAIL VERIFICATION ROUTES ---
+// --- EMAIL VERIFICATION ---
 Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
-// TAMBAHKAN ROUTE INI (Penting untuk tombol Kirim Ulang)
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return back()->with('message', 'Verification link sent!');
