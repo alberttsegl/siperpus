@@ -21,14 +21,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Admin Only
-    Route::middleware(['role:admin'])->group(function () {
+    // IZINKAN: Admin, Guru, dan Kepala Perpustakaan kelola User & Distributor
+    Route::middleware(['role:admin,guru,kepala perpustakaan'])->group(function () {
         Route::resource('user', UserController::class);
         Route::resource('distributors', DistributorController::class);
     });
 
-    // Admin & Guru
-    Route::middleware(['role:admin,guru'])->group(function () {
+    // IZINKAN: Admin, Guru, dan Kepala Perpustakaan kelola Buku, Borrowers & Purchase
+    Route::middleware(['role:admin,guru,kepala perpustakaan'])->group(function () {
         Route::resource('books', BooksController::class);
         Route::resource('borrowers', BorrowerController::class);
         
@@ -44,18 +44,3 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/user/avatar/{id}', [UserController::class, 'showAvatar'])->name('user.avatar');
     Route::post('/user-profile-update', [UserController::class, 'updateProfile'])->name('user.profile.update');
 });
-
-// --- EMAIL VERIFICATION ---
-Route::get('/email/verify', function () {
-    return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
-
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-    return redirect('/dashboard');
-})->middleware(['auth', 'signed'])->name('verification.verify');

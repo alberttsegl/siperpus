@@ -34,7 +34,7 @@
             </div>
         </td>
         <td class="align-middle ps-3">
-            <span class="badge badge-sm {{ $user->role == 'admin' ? 'bg-gradient-primary' : ($user->role == 'guru' ? 'bg-gradient-info' : 'bg-gradient-secondary') }}">
+            <span class="badge badge-sm {{ $user->role == 'admin', 'kepala perpustakaan' ? 'bg-gradient-primary' : ($user->role == 'guru' ? 'bg-gradient-info' : 'bg-gradient-secondary') }}">
                 {{ $user->role }}
             </span>
         </td>

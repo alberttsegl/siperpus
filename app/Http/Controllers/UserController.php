@@ -30,7 +30,7 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
-            'role' => 'required|in:admin,guru,siswa',
+            'role' => 'required|in:admin,guru,siswa,kepala perpustakaan',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -69,7 +69,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.$id,
-            'role' => 'required|in:admin,guru,siswa',
+            'role' => 'required|in:admin,guru,siswa,kepala perpustakaan',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 

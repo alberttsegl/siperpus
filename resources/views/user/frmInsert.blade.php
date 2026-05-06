@@ -1,4 +1,13 @@
 <h5 class="mb-4">Input Users Data</h5>
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
 <form action="{{ route('user.store') }}" method="post" id="frm" enctype="multipart/form-data"> 
     @csrf
@@ -19,6 +28,7 @@
             <option value="siswa">Siswa</option>
             <option value="guru">Guru</option>
             <option value="admin">Admin</option>
+            <option value="kepala perpustakaan">Kepala Perpustakaan</option>
         </select>
     </div>
 
