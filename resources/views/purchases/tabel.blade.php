@@ -1,3 +1,4 @@
+<!-- Load SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="row">
@@ -21,6 +22,10 @@
           </thead>
           <tbody>
             @foreach ($purchases as $item)
+            @php
+              // Gunakan md5 dari no_nota untuk ID form agar unik dan aman dari karakter spesial
+              $safeId = md5($item->no_nota);
+            @endphp
             <tr>
               <td class="align-middle ps-3">
                 <span class="text-sm font-weight-bold">{{ $item->no_nota }}</span>
@@ -45,27 +50,24 @@
               </td>
               <td class="align-middle text-center">
                 <div class="d-flex justify-content-center gap-2">
-                  <a href="{{ route('purchases.edit', $item->no_nota) }}" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1 mb-0">
+                  <!-- Tombol Edit -->
+                  <button type="button" onclick="verifyAction('edit', '{{ addslashes($item->no_nota) }}', '{{ $safeId }}')" class="btn btn-sm btn-outline-primary mb-0">
                     <i class="fa-regular fa-pen-to-square"></i> Edit
-                  </a>
+                  </button>
 
-                  <form action="{{ route('purchases.destroy', $item->no_nota) }}" method="POST" class="delete-purchase-form mb-0">
+                  <!-- Form Delete: Mengarah ke no_nota yang ada di tabel purchase_details dan purchases[cite: 6, 7] -->
+                  <form id="delete-form-{{ $safeId }}" action="{{ route('purchases.destroy', $item->no_nota) }}" method="POST" class="d-none">
                     @csrf
                     @method('DELETE')
-                    <button type="button" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 btn-delete mb-0">
-                      <i class="fa-regular fa-trash-can"></i> Delete
-                    </button>
                   </form>
+                  
+                  <button type="button" onclick="verifyAction('delete', '{{ addslashes($item->no_nota) }}', '{{ $safeId }}')" class="btn btn-sm btn-outline-danger mb-0">
+                    <i class="fa-regular fa-trash-can"></i> Delete
+                  </button>
                 </div>
               </td>
             </tr>
             @endforeach
-
-            @if($purchases->isEmpty())
-            <tr>
-              <td colspan="6" class="text-center text-muted py-4">Belum ada data transaksi pembelian</td>
-            </tr>
-            @endif
           </tbody>
         </table>
       </div>
@@ -74,43 +76,71 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Search filter untuk Nota, Distributor, dan Buku
-  const input = document.getElementById('purchaseSearch');
-  input.addEventListener('keyup', () => {
-    const filter = input.value.toLowerCase();
-    const rows = document.querySelectorAll('table tbody tr');
-
-    rows.forEach(row => {
-      const nota = row.cells[0]?.textContent.toLowerCase() || '';
-      const distributor = row.cells[2]?.textContent.toLowerCase() || '';
-      const buku = row.cells[3]?.textContent.toLowerCase() || '';
-
-      row.style.display = (nota.includes(filter) || distributor.includes(filter) || buku.includes(filter)) ? '' : 'none';
+function verifyAction(action, id, safeId) {
+    Swal.fire({
+        title: 'Password diperlukan!',
+        input: 'password',
+        inputPlaceholder: 'Masukkan password boss',
+        showCancelButton: true,
+        confirmButtonText: 'Verifikasi',
+        confirmButtonColor: '#cb0c9f',
+        showLoaderOnConfirm: true,
+        preConfirm: (password) => {
+            return fetch("{{ route('user.checkBossPassword') }}", {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+                },
+                body: JSON.stringify({ password: password })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => { throw new Error(data.message || 'Gagal verifikasi') });
+                }
+                return response.json();
+            })
+            .catch(error => { Swal.showValidationMessage(error.message); });
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (action === 'edit') {
+                window.location.href = `/purchases/${encodeURIComponent(id)}/edit`;
+            } else {
+                confirmDeletion(safeId);
+            }
+        }
     });
-  });
+}
 
-  // SweetAlert2 untuk delete
-  const deleteButtons = document.querySelectorAll('.btn-delete');
-  deleteButtons.forEach(btn => {
-    btn.addEventListener('click', function() {
-      const form = this.closest('form');
-      Swal.fire({
+function confirmDeletion(safeId) {
+    Swal.fire({
         title: 'Hapus Transaksi?',
-        text: "Data pembelian ini akan dihapus permanen!",
+        text: "Data di tabel purchases dan purchase_details akan ikut terhapus!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Ya, hapus!',
+        confirmButtonColor: '#ea0606',
+        confirmButtonText: 'Ya, Hapus Sekarang!',
         cancelButtonText: 'Batal',
         reverseButtons: true
-      }).then((result) => {
+    }).then((result) => {
         if (result.isConfirmed) {
-          form.submit();
+            const form = document.getElementById('delete-form-' + safeId);
+            if (form) {
+                form.submit(); // Mengirim perintah hapus ke controller[cite: 6]
+            }
         }
-      });
     });
-  });
+}
+
+// Search Filter
+document.getElementById('purchaseSearch')?.addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('table tbody tr');
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
 });
 </script>

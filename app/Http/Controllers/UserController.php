@@ -39,17 +39,13 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            // HAPUS baris email_verified_at => now() agar statusnya 'Not Verified' di awal
         ];
 
         if ($request->hasFile('profile_picture')) {
             $data['profile_picture'] = $request->file('profile_picture')->store('private', 'local');
         }
 
-        // Simpan user ke variabel
         $user = User::create($data);
-
-        // TRIGGER pengiriman email verifikasi ke Gmail
         event(new Registered($user));
 
         return redirect()->route('user.index')->with('success', 'User created! Silakan cek Gmail untuk verifikasi.');
@@ -114,5 +110,34 @@ class UserController extends Controller
         }
         
         return redirect("https://ui-avatars.com/api/?name=" . urlencode($user->name) . "&background=random");
+    }
+
+    /**
+     * Method Baru: Validasi Password Atasan (Admin, Guru, atau Kepala Perpustakaan)
+     * Sesuai instruksi tugas untuk Edit/Hapus Purchase
+     */
+    public function checkBossPassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+        ]);
+
+        // Cari user yang memiliki role atasan (Admin, Guru, atau Kepala Perpustakaan)
+        // Kita prioritaskan mengecek apakah ada salah satu user di role tersebut yang passwordnya cocok
+        $bosses = User::whereIn('role', ['admin', 'guru', 'kepala perpustakaan'])->get();
+
+        foreach ($bosses as $boss) {
+            if (Hash::check($request->password, $boss->password)) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Nice! Your password is correct!'
+                ], 200);
+            }
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Password salah atau Anda tidak memiliki akses!'
+        ], 401);
     }
 }

@@ -14,6 +14,7 @@ class PurchaseController extends Controller
             ->join('purchase_details as pd', 'p.no_nota', '=', 'pd.no_nota')
             ->join('books as b', 'pd.kdbuku', '=', 'b.kdbuku')
             ->select('p.*', 'd.nama_distributor', 'd.no_telpon', 'pd.jumlah_beli', 'pd.harga_beli', 'pd.subtotal', 'b.judul')
+            ->orderBy('p.created_at', 'desc')
             ->get();
 
         return view('purchases.index', [
@@ -64,10 +65,15 @@ class PurchaseController extends Controller
 
     public function edit($no_nota)
     {
+        // Langsung cari tanpa urldecode yang ribet
         $purchase = DB::table('purchases')->where('no_nota', $no_nota)->first();
         $detail = DB::table('purchase_details')->where('no_nota', $no_nota)->first();
         $distributors = DB::table('distributors')->get();
         $books = DB::table('books')->get(); 
+
+        if (!$purchase) {
+            return redirect()->route('purchases.index')->with('error', 'Data tidak ditemukan!');
+        }
 
         return view('purchases.edit', [
             'title' => 'Edit Transaksi',
@@ -83,6 +89,13 @@ class PurchaseController extends Controller
         DB::transaction(function () use ($request, $no_nota) {
             $subtotal = $request->jumlah_beli * $request->harga_beli;
 
+            // Balikin stok lama
+            $oldDetail = DB::table('purchase_details')->where('no_nota', $no_nota)->first();
+            if ($oldDetail) {
+                DB::table('books')->where('kdbuku', $oldDetail->kdbuku)->decrement('stock', $oldDetail->jumlah_beli);
+            }
+
+            // Update Header
             DB::table('purchases')->where('no_nota', $no_nota)->update([
                 'tgl_nota' => $request->tgl_nota,
                 'id_distributor' => $request->id_distributor,
@@ -90,12 +103,16 @@ class PurchaseController extends Controller
                 'updated_at' => now(),
             ]);
 
+            // Update Detail
             DB::table('purchase_details')->where('no_nota', $no_nota)->update([
                 'kdbuku' => $request->kdbuku,
                 'jumlah_beli' => $request->jumlah_beli,
                 'harga_beli' => $request->harga_beli,
                 'subtotal' => $request->subtotal ?? $subtotal,
             ]);
+
+            // Tambah stok baru
+            DB::table('books')->where('kdbuku', $request->kdbuku)->increment('stock', $request->jumlah_beli);
         });
 
         return redirect()->route('purchases.index')->with('success', 'Data Diperbarui!');
@@ -103,28 +120,32 @@ class PurchaseController extends Controller
 
     public function destroy($no_nota)
 {
+    // Decode jika no_nota mengandung karakter spesial seperti '/'
+    $no_nota = urldecode($no_nota);
+
     try {
         DB::transaction(function () use ($no_nota) {
-            $nota = (string)$no_nota;
-
-            // 1. Ambil detail untuk balikin stok
-            $detail = DB::table('purchase_details')->where('no_nota', $nota)->first();
+            // 1. Ambil detail untuk mengembalikan stok buku
+            $details = DB::table('purchase_details')->where('no_nota', $no_nota)->get();
             
-            if ($detail) {
+            foreach ($details as $item) {
+                // Pembelian dihapus = Stok buku harus berkurang kembali
                 DB::table('books')
-                    ->where('kdbuku', $detail->kdbuku)
-                    ->decrement('stock', $detail->jumlah_beli);
+                    ->where('kdbuku', $item->kdbuku)
+                    ->decrement('stock', $item->jumlah_beli);
             }
 
-            // 2. HAPUS DENGAN CARA INI (WAJIB SAMA)
-            // Kita kasih where dulu baru delete, biar dia gak nyari kolom 'id'
-            DB::table('purchase_details')->where('no_nota', $nota)->delete();
-            DB::table('purchases')->where('no_nota', $nota)->delete();
+            // 2. Hapus dari purchase_details (tabel anak)
+            DB::table('purchase_details')->where('no_nota', $no_nota)->delete();
+
+            // 3. Hapus dari purchases (tabel induk)[cite: 7]
+            DB::table('purchases')->where('no_nota', $no_nota)->delete();
         });
 
-        return redirect()->route('purchases.index')->with('success', 'Data Berhasil Dihapus!');
+        return redirect()->route('purchases.index')->with('success', 'Transaksi Berhasil Dihapus!');
+
     } catch (\Exception $e) {
-        // Balikin error asli biar lo bisa liat kalau masih gagal
+        // Jika gagal, kirim pesan error agar bisa kita baca di UI
         return redirect()->route('purchases.index')->with('error', 'Gagal: ' . $e->getMessage());
     }
 }
